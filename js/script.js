@@ -139,14 +139,14 @@ const PRODUCTS = [
 ];
 // Simulado de ofertas de tiendas para cada producto (en un caso real, esto vendría de una API o base de datos)
 const OFFERS = [
-  { id: 'o1', productId: 'p1', storeId: 's1', price: 124.99, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
-  { id: 'o2', productId: 'p1', storeId: 's2', price: 119.50, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
-  { id: 'o3', productId: 'p1', storeId: 's4', price: 129.99, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
-  { id: 'o4', productId: 'p2', storeId: 's1', price: 185.00, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
-  { id: 'o5', productId: 'p2', storeId: 's3', price: 190.00, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
-  { id: 'o6', productId: 'p2', storeId: 's5', price: 179.99, currency: 'EUR', url: '#', stock: false, lastUpdated: new Date().toISOString() },
-  { id: 'o7', productId: 'p3', storeId: 's1', price: 105.00, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
-  { id: 'o8', productId: 'p3', storeId: 's2', price: 110.00, currency: 'EUR', url: '#', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o1', productId: 'p1', storeId: 's1', price: 124.99, currency: 'EUR', url: 'https://www.zalando.es/nike-zapatillas-running/', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o2', productId: 'p1', storeId: 's2', price: 119.50, currency: 'EUR', url: 'https://www.asos.com/nike-running-shoes/', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o3', productId: 'p1', storeId: 's4', price: 129.99, currency: 'EUR', url: 'https://www.nike.com/es/zapatillas-running-hombre/', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o4', productId: 'p2', storeId: 's1', price: 185.00, currency: 'EUR', url: 'https://www.zalando.es/adidas-ultraboost/', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o5', productId: 'p2', storeId: 's3', price: 190.00, currency: 'EUR', url: 'https://www.adidas.es/zapatillas-ultraboost/', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o6', productId: 'p2', storeId: 's5', price: 179.99, currency: 'EUR', url: 'https://www.decathlon.es/adidas-zapatillas-running/', stock: false, lastUpdated: new Date().toISOString() },
+  { id: 'o7', productId: 'p3', storeId: 's1', price: 105.00, currency: 'EUR', url: 'https://www.zalando.es/puma-zapatillas/', stock: true, lastUpdated: new Date().toISOString() },
+  { id: 'o8', productId: 'p3', storeId: 's2', price: 110.00, currency: 'EUR', url: 'https://www.asos.com/puma-shoes/', stock: true, lastUpdated: new Date().toISOString() },
 ];
 
 let currentSearch = '';
@@ -158,6 +158,7 @@ function init() {
   renderProducts(PRODUCTS);
   setupSearchListeners();
   updateStatistics();
+  setupModalListeners();
 }
 
 // ========================================
@@ -341,6 +342,9 @@ function renderProducts(productsToRender) {
   productsToRender.forEach(product => {
     const card = document.createElement('div');
     card.className = 'brutal-card';
+    card.addEventListener('click', () => {
+      openPriceModal(product.id);
+    });
 
     const bestOffer = OFFERS.filter(o => o.productId === product.id).sort((a, b) => a.price - b.price)[0];
     const priceDisplay = bestOffer ? `${bestOffer.price} ${bestOffer.currency}` : `${product.basePrice} EUR`;
@@ -352,12 +356,216 @@ function renderProducts(productsToRender) {
       <p>${product.category}</p>
       <div class="brutal-card-footer">
         <span class="brutal-card-price">${priceDisplay}</span>
-        <button class="brutal-card-btn" aria-label="Ver detalles">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        <button class="brutal-card-btn" aria-label="Comparar precios">
+          COMPARAR PRECIOS
         </button>
       </div>
     `;
     grid.appendChild(card);
+  });
+}
+
+// ========================================
+// PRICE COMPARISON MODAL (CU2)
+// ========================================
+function openPriceModal(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  if (!product) return;
+
+  // Actualizar encabezado
+  document.getElementById('modalProductName').textContent = product.name;
+  document.getElementById('modalProductImage').src = product.image;
+  document.getElementById('modalProductDescription').textContent = product.description;
+
+  // Badge de precio mínimo histórico
+  const allOffers = OFFERS.filter(o => o.productId === productId);
+  const lowestPrice = allOffers.length > 0
+    ? Math.min(...allOffers.map(o => o.price))
+    : product.basePrice;
+
+  const badge = document.getElementById('modalLowestPrice');
+  if (lowestPrice < 120) {
+    badge.textContent = '¡PRECIO MÍNIMO HISTÓRICO!';
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  // Renderizar detalles del producto
+  renderProductDetails(product);
+
+  // Renderizar ofertas
+  renderOffers(productId);
+
+  // Renderizar histórico de precios
+  renderPriceHistory(productId);
+
+  // Abrir modal
+  document.getElementById('priceModal').style.display = 'flex';
+}
+
+function renderProductDetails(product) {
+  const detailsContainer = document.getElementById('productDetailsContent');
+  detailsContainer.innerHTML = '';
+
+  const details = [
+    { label: 'MARCA', value: product.brand },
+    { label: 'CATEGORÍA', value: product.category },
+    { label: 'PRECIO BASE', value: `${new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(product.basePrice)}` },
+  ];
+
+  details.forEach(detail => {
+    const item = document.createElement('div');
+    item.className = 'detail-item';
+    item.innerHTML = `
+      <span class="detail-label">${detail.label}</span>
+      <span class="detail-value">${detail.value}</span>
+    `;
+    detailsContainer.appendChild(item);
+  });
+}
+
+function closePriceModal() {
+  document.getElementById('priceModal').style.display = 'none';
+  document.getElementById('offersContainer').innerHTML = '';
+  if (priceModal) {
+    priceModal.destroy();
+    priceModal = null;
+  }
+}
+
+let priceModal = null;
+
+function renderOffers(productId) {
+  const offers = OFFERS.filter(o => o.productId === productId)
+    .sort((a, b) => a.price - b.price); // Ordenamiento CU2
+
+  const container = document.getElementById('offersContainer');
+  container.innerHTML = '';
+
+  if (offers.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: #999;">No hay ofertas disponibles para este producto</p>';
+    return;
+  }
+
+  offers.forEach(offer => {
+    const store = STORES.find(s => s.id === offer.storeId);
+    const stockText = offer.stock ? 'En Stock' : 'Sin Stock';
+    const updatedText = formatDate(offer.lastUpdated);
+
+    const row = document.createElement('div');
+    row.className = 'offer-row';
+    row.innerHTML = `
+      <img src="${store.logo}" alt="${store.name}" class="offer-logo" referrerPolicy="no-referrer">
+      <div class="offer-info">
+        <span class="offer-store">${store.name}</span>
+        <span class="offer-price">${new Intl.NumberFormat('es-ES', { style: 'currency', currency: offer.currency }).format(offer.price)}</span>
+        <span class="offer-stock">${stockText}</span>
+        <span class="offer-updated">Actualizado: ${updatedText}</span>
+      </div>
+      <button class="compare-btn" data-url="${offer.url}">
+        COMPARAR PRECIOS
+      </button>
+    `;
+
+    row.querySelector('.compare-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const url = e.target.getAttribute('data-url');
+      if (url && url !== '#') {
+        window.open(url, '_blank');
+      }
+    });
+
+    container.appendChild(row);
+  });
+}
+
+function renderPriceHistory(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  const historyContainer = document.getElementById('modalPriceHistory');
+
+  if (!product || !product.priceHistory || product.priceHistory.length === 0) {
+    historyContainer.style.display = 'none';
+    return;
+  }
+
+  historyContainer.style.display = 'block';
+
+  // Destruir gráfica anterior si existe
+  if (priceModal) {
+    priceModal.destroy();
+  }
+
+  const labels = product.priceHistory.map(h => h.date);
+  const data = product.priceHistory.map(h => h.price);
+
+  const ctx = document.getElementById('modalPriceChart').getContext('2d');
+  priceModal = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: `Precio (${OFFERS.find(o => o.productId === productId)?.currency || 'EUR'})`,
+        data: data,
+        borderColor: '#00FF00',
+        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+        borderWidth: 3,
+        pointBackgroundColor: '#000',
+        pointBorderColor: '#00FF00',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: false,
+          grid: { color: '#ddd' }
+        },
+        x: {
+          grid: { display: false }
+        }
+      },
+      plugins: { legend: { display: true } }
+    }
+  });
+}
+
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'ahora';
+  if (diffMins < 60) return `hace ${diffMins} min`;
+  if (diffHours < 24) return `hace ${diffHours} h`;
+  if (diffDays < 30) return `hace ${diffDays} d`;
+
+  return date.toLocaleDateString('es-ES');
+}
+
+function setupModalListeners() {
+  // Cerrar modal por botón X
+  document.getElementById('closeModal').addEventListener('click', closePriceModal);
+
+  // Cerrar modal por tecla ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('priceModal').style.display !== 'none') {
+      closePriceModal();
+    }
+  });
+
+  // Cerrar modal por click en overlay
+  document.getElementById('priceModal').addEventListener('click', (e) => {
+    if (e.target.id === 'priceModal') {
+      closePriceModal();
+    }
   });
 }
 
