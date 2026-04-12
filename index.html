@@ -78,6 +78,34 @@
     </section>
 
     <main class="container">
+        <!-- FILTER & SORT SECTION -->
+        <section class="sort-controls" id="sortControls">
+            <div style="position: relative;">
+                <button class="sort-btn categories-btn" id="categoriesBtn" style="display: flex; align-items: center; gap: 0.5rem;">
+                    📂 CATEGORÍAS
+                </button>
+                <div id="categoriesDropdown" class="dropdown-menu"></div>
+            </div>
+
+            <div style="position: relative;">
+                <button class="sort-btn" id="sortBtn" style="display: flex; align-items: center; gap: 0.5rem;">
+                    ⬆️ ORDENAR
+                </button>
+                <div id="sortDropdown" class="dropdown-menu">
+                    <div class="dropdown-item" data-sort="featured">⭐ DESTACADOS</div>
+                    <div class="dropdown-item" data-sort="price-low">💰 MENOR PRECIO</div>
+                    <div class="dropdown-item" data-sort="price-high">🔝 MAYOR PRECIO</div>
+                    <div class="dropdown-item" data-sort="newest">🆕 MÁS NUEVOS</div>
+                </div>
+            </div>
+
+            <div style="flex: 1;"></div>
+
+            <div style="position: relative;">
+                <input type="number" id="priceFilter" class="sort-btn" placeholder="Precio máx." style="background: white; flex: 0 1 120px; padding: 0.6rem;">
+            </div>
+        </section>
+
         <!-- RESULTS/CATALOG SECTION -->
         <section aria-labelledby="catalog-title">
             <div class="section-title" id="catalog-title">

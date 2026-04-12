@@ -150,6 +150,9 @@ const OFFERS = [
 ];
 
 let currentSearch = '';
+let currentSort = 'featured';
+let currentCategory = '';
+let currentMaxPrice = Infinity;
 
 // ========================================
 // INITIALIZATION
@@ -157,6 +160,7 @@ let currentSearch = '';
 function init() {
   renderProducts(PRODUCTS);
   setupSearchListeners();
+  setupSortAndFilterListeners();
   updateStatistics();
   setupModalListeners();
 }
@@ -221,6 +225,128 @@ function setupSearchListeners() {
   });
 }
 
+// ========================================
+// SORT AND FILTER FUNCTIONALITY
+// ========================================
+function setupSortAndFilterListeners() {
+  // Categories button and dropdown
+  const categoriesBtn = document.getElementById('categoriesBtn');
+  const categoriesDropdown = document.getElementById('categoriesDropdown');
+
+  // Get unique categories
+  const categories = ['TODOS', ...new Set(PRODUCTS.map(p => p.category))];
+  categoriesDropdown.innerHTML = categories.map(cat =>
+    `<div class="dropdown-item" data-category="${cat === 'TODOS' ? '' : cat}">${cat}</div>`
+  ).join('');
+
+  categoriesBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    categoriesDropdown.classList.toggle('active');
+    document.getElementById('sortDropdown').classList.remove('active');
+  });
+
+  categoriesDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      currentCategory = item.dataset.category;
+      document.querySelectorAll('#categoriesDropdown .dropdown-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      applyFilterAndSort();
+      categoriesDropdown.classList.remove('active');
+    });
+  });
+
+  // Sort button and dropdown
+  const sortBtn = document.getElementById('sortBtn');
+  const sortDropdown = document.getElementById('sortDropdown');
+
+  sortBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sortDropdown.classList.toggle('active');
+    categoriesDropdown.classList.remove('active');
+  });
+
+  sortDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      currentSort = item.dataset.sort;
+      document.querySelectorAll('#sortDropdown .dropdown-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      applyFilterAndSort();
+      sortDropdown.classList.remove('active');
+    });
+  });
+
+  // Price filter
+  const priceFilter = document.getElementById('priceFilter');
+  priceFilter.addEventListener('change', (e) => {
+    currentMaxPrice = e.target.value ? parseFloat(e.target.value) : Infinity;
+    applyFilterAndSort();
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.sort-controls')) {
+      categoriesDropdown.classList.remove('active');
+      sortDropdown.classList.remove('active');
+    }
+  });
+
+  // Set default active items
+  categoriesDropdown.querySelector('[data-category=""]')?.classList.add('active');
+  sortDropdown.querySelector('[data-sort="featured"]')?.classList.add('active');
+}
+
+function applyFilterAndSort() {
+  let filtered = PRODUCTS.filter(product => {
+    // Filter by search
+    const matchesSearch = !currentSearch ||
+      product.name.toLowerCase().includes(currentSearch) ||
+      product.brand.toLowerCase().includes(currentSearch) ||
+      product.category.toLowerCase().includes(currentSearch);
+
+    // Filter by category
+    const matchesCategory = !currentCategory || product.category === currentCategory;
+
+    // Filter by price
+    const bestOffer = OFFERS.filter(o => o.productId === product.id).sort((a, b) => a.price - b.price)[0];
+    const price = bestOffer ? bestOffer.price : product.basePrice;
+    const matchesPrice = price <= currentMaxPrice;
+
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
+
+  // Apply sorting
+  switch(currentSort) {
+    case 'price-low':
+      filtered.sort((a, b) => {
+        const aOffer = OFFERS.filter(o => o.productId === a.id).sort((x, y) => x.price - y.price)[0];
+        const bOffer = OFFERS.filter(o => o.productId === b.id).sort((x, y) => x.price - y.price)[0];
+        const aPrice = aOffer ? aOffer.price : a.basePrice;
+        const bPrice = bOffer ? bOffer.price : b.basePrice;
+        return aPrice - bPrice;
+      });
+      break;
+    case 'price-high':
+      filtered.sort((a, b) => {
+        const aOffer = OFFERS.filter(o => o.productId === a.id).sort((x, y) => x.price - y.price)[0];
+        const bOffer = OFFERS.filter(o => o.productId === b.id).sort((x, y) => x.price - y.price)[0];
+        const aPrice = aOffer ? aOffer.price : a.basePrice;
+        const bPrice = bOffer ? bOffer.price : b.basePrice;
+        return bPrice - aPrice;
+      });
+      break;
+    case 'newest':
+      // Reverse order for newest
+      filtered.reverse();
+      break;
+    case 'featured':
+    default:
+      // Keep original order for featured
+      break;
+  }
+
+  renderProducts(filtered);
+}
+
 function showSuggestions(query) {
   const lowerQuery = query.toLowerCase();
 
@@ -278,31 +404,14 @@ function performSearch(query) {
 
   if (!currentSearch) {
     // Show all products if search is empty
-    renderProducts(PRODUCTS);
+    applyFilterAndSort();
     hideSearchStatus();
     hideEmptyState();
     return;
   }
 
-  // Filter products by name, brand, or category
-  const filtered = PRODUCTS.filter(product => {
-    const name = product.name.toLowerCase();
-    const brand = product.brand.toLowerCase();
-    const category = product.category.toLowerCase();
-
-    return name.includes(currentSearch) ||
-           brand.includes(currentSearch) ||
-           category.includes(currentSearch);
-  });
-
-  // Display results
-  if (filtered.length > 0) {
-    showSearchStatus(`${filtered.length} resultado${filtered.length !== 1 ? 's' : ''} para "${currentSearch}"`);
-    renderProducts(filtered);
-    hideEmptyState();
-  } else {
-    hideSearchStatus();
-    showEmptyState();
+  applyFilterAndSort();
+}
   }
 }
 
