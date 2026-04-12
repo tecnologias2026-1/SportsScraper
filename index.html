@@ -12,7 +12,7 @@
     <!-- HEADER: CU1 - Search Interface -->
     <header class="app-header">
         <div class="header-container">
-            <div class="logo">Sports<span>Scraper</span></div>
+            <a href="#/" class="logo" style="cursor: pointer; text-decoration: none; color: inherit;">Sports<span>Scraper</span></a>
 
             <div class="search-bar-wrapper">
                 <div class="search-bar">
@@ -34,12 +34,16 @@
             </div>
 
             <nav class="header-nav">
-                <button class="brutal-btn button-login">LOGIN</button>
+                <div class="user-menu" id="userMenu">
+                    <!-- User menu or login button will be inserted here -->
+                </div>
             </nav>
         </div>
     </header>
 
-    <section class="hero">
+    <!-- HOME PAGE (CU1 - Search & Catalog) -->
+    <div id="homePage" data-page="home">
+        <section class="hero">
         <h1>COMPARA PRECIOS<br>SIN RODEOS</h1>
         <p>Sistema de metabúsqueda en tiempo real para retail deportivo</p>
 
@@ -100,6 +104,7 @@
             </div>
         </section>
     </main>
+    </div>
 
     <!-- PRICE COMPARISON MODAL (CU2) -->
     <div id="priceModal" class="modal-overlay" style="display: none;">
@@ -196,6 +201,134 @@
         </div>
     </div>
 
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" data-page="login" style="display: none;">
+        <div class="auth-page">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="logo">Sports<span>Scraper</span></div>
+                </div>
+                <h1>INICIAR SESIÓN</h1>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="EMAIL" class="brutal-input" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="CONTRASEÑA" class="brutal-input" required>
+                    </div>
+                    <button type="submit" class="brutal-btn btn-primary">ENTRAR</button>
+                </form>
+                <p class="auth-link">¿No tienes cuenta? <a href="#/register">REGISTRARSE</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER PAGE -->
+    <div id="registerPage" data-page="register" style="display: none;">
+        <div class="auth-page">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="logo">Sports<span>Scraper</span></div>
+                </div>
+                <h1>CREAR CUENTA</h1>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <input type="text" id="registerName" placeholder="NOMBRE COMPLETO" class="brutal-input" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="registerEmail" placeholder="EMAIL" class="brutal-input" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPassword" placeholder="CONTRASEÑA" class="brutal-input" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPasswordConfirm" placeholder="CONFIRMAR CONTRASEÑA" class="brutal-input" required>
+                    </div>
+                    <button type="submit" class="brutal-btn btn-primary">REGISTRARSE</button>
+                </form>
+                <p class="auth-link">¿Tienes cuenta? <a href="#/login">INICIA SESIÓN</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div id="profilePage" data-page="profile" style="display: none;">
+        <div class="container">
+            <section class="profile-section">
+                <div class="section-title">
+                    <span>MI CUENTA</span>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="profile-header">
+                    <img id="profileAvatar" src="" alt="avatar" class="profile-avatar">
+                    <div class="profile-info">
+                        <h2 id="profileName"></h2>
+                        <p id="profileEmail" class="profile-email"></p>
+                        <p class="profile-member-since" id="profileMemberSince"></p>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button id="editProfileBtn" class="brutal-btn">EDITAR PERFIL</button>
+                    <button id="changePasswordBtn" class="brutal-btn">CAMBIAR CONTRASEÑA</button>
+                    <button id="logoutBtn" class="brutal-btn logout-btn">CERRAR SESIÓN</button>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-number" id="alertsCount">0</span>
+                        <span class="stat-label">ALERTAS ACTIVAS</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="recentSearches">0</span>
+                        <span class="stat-label">BÚSQUEDAS RECIENTES</span>
+                    </div>
+                </div>
+
+                <div class="profile-preferences">
+                    <h3>PREFERENCIAS</h3>
+                    <label>
+                        <input type="checkbox" id="notificationsToggle" checked>
+                        Recibir notificaciones de alertas
+                    </label>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ALERTS PAGE -->
+    <div id="alertsPage" data-page="alerts" style="display: none;">
+        <div class="container">
+            <section class="alerts-section">
+                <div class="section-title">
+                    <span>MIS ALERTAS DE PRECIO</span>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="alerts-controls">
+                    <select id="alertFilter" class="brutal-input">
+                        <option value="">TODAS LAS ALERTAS</option>
+                        <option value="active">ACTIVAS</option>
+                        <option value="inactive">INACTIVAS</option>
+                    </select>
+                </div>
+
+                <div id="alertsList" class="alerts-container">
+                    <!-- Alerts rendered here -->
+                </div>
+
+                <div id="emptyAlertsState" class="empty-state" style="display: none;">
+                    <div class="empty-state-content">
+                        <h3>No tienes alertas configuradas</h3>
+                        <p>Configura alertas de precio desde el catálogo de productos</p>
+                        <a href="#/" class="brutal-btn">VOLVER AL CATÁLOGO</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
     <footer>
         <div class="container" style="padding: 0;">
             <div class="logo" style="margin-bottom: 1rem;">Sports<span>Scraper</span></div>
@@ -206,6 +339,8 @@
         </div>
     </footer>
 
+    <script src="js/router.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

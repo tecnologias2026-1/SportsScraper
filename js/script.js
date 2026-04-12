@@ -576,7 +576,314 @@ function setupModalListeners() {
   });
 }
 
+function setupAuthListeners() {
+  // LOGIN FORM
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const result = loginUser(email, password);
+      if (result.success) {
+        updateUserMenu();
+        router.go('/');
+        alert('¡Bienvenido ' + result.user.name + '!');
+      } else {
+        alert('Error: ' + result.error);
+      }
+      loginForm.reset();
+    });
+  }
+
+  // REGISTER FORM
+  const registerForm = document.getElementById('registerForm');
+  if (registerForm) {
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('registerName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+      const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+      if (password !== passwordConfirm) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+
+      const result = registerUser(email, password, name);
+      if (result.success) {
+        alert('¡Cuenta creada! Ahora puedes iniciar sesión');
+        router.go('/login');
+      } else {
+        alert('Error: ' + result.error);
+      }
+      registerForm.reset();
+    });
+  }
+
+  // LOGIN BUTTON IN HEADER
+  const loginBtn = document.querySelector('.button-login');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+      router.go('/login');
+    });
+  }
+}
+
+function updateUserMenu() {
+  const userMenu = document.getElementById('userMenu');
+  const user = getCurrentUser();
+
+  userMenu.innerHTML = '';
+
+  if (user && isLoggedIn()) {
+    // Show user menu when logged in
+    userMenu.innerHTML = `
+      <img src="${user.avatar}" alt="avatar" class="user-avatar">
+      <span class="user-username">${user.name}</span>
+      <div class="user-dropdown">
+        <button class="brutal-btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">CUENTA ▼</button>
+        <div class="user-dropdown-menu">
+          <a href="#/profile">MI PERFIL</a>
+          <a href="#/alerts">MIS ALERTAS</a>
+          <button id="logoutHeaderBtn">CERRAR SESIÓN</button>
+        </div>
+      </div>
+    `;
+
+    // Add event listeners
+    const dropdownBtn = userMenu.querySelector('.brutal-btn');
+    const dropdownMenu = userMenu.querySelector('.user-dropdown-menu');
+
+    dropdownBtn.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('active');
+      }
+    });
+
+    const logoutBtn = document.getElementById('logoutHeaderBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        logoutUser();
+        updateUserMenu();
+        router.go('/');
+        alert('Sesión cerrada');
+      });
+    }
+  } else {
+    // Show login button when not logged in
+    userMenu.innerHTML = `<button class="brutal-btn button-login">LOGIN</button>`;
+    const newLoginBtn = userMenu.querySelector('.button-login');
+    newLoginBtn.addEventListener('click', () => {
+      router.go('/login');
+    });
+  }
+}
+
+function setupProfileListeners() {
+  const profilePage = document.getElementById('profilePage');
+  if (!profilePage) return;
+
+  const user = getCurrentUser();
+  if (!user) {
+    router.go('/login');
+    return;
+  }
+
+  // Display user info
+  document.getElementById('profileAvatar').src = user.avatar;
+  document.getElementById('profileName').textContent = user.name;
+  document.getElementById('profileEmail').textContent = user.email;
+  document.getElementById('profileMemberSince').textContent =
+    'Miembro desde: ' + new Date(user.createdAt).toLocaleDateString('es-ES');
+
+  // Display stats
+  const alerts = getAlerts();
+  const userAlerts = alerts.filter(a => a.productId); // Simplified count
+  document.getElementById('alertsCount').textContent = userAlerts.length;
+
+  const searchHistory = JSON.parse(localStorage.getItem('sportsscraper_search_history')) || [];
+  document.getElementById('recentSearches').textContent = searchHistory.length;
+
+  // Profile action buttons
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    const newName = prompt('Nuevo nombre:', user.name);
+    if (newName && newName.trim()) {
+      updateUserProfile(newName, user.email);
+      alert('Perfil actualizado');
+      document.getElementById('profileName').textContent = newName;
+    }
+  });
+
+  document.getElementById('changePasswordBtn').addEventListener('click', () => {
+    const oldPassword = prompt('Contraseña actual:');
+    if (!oldPassword) return;
+
+    const newPassword = prompt('Nueva contraseña (mín. 6 caracteres):');
+    if (!newPassword || newPassword.length < 6) {
+      alert('Contraseña inválida');
+      return;
+    }
+
+    const result = changePassword(oldPassword, newPassword);
+    if (result.success) {
+      alert('Contraseña cambiada exitosamente');
+    } else {
+      alert('Error: ' + result.error);
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    logoutUser();
+    updateUserMenu();
+    router.go('/');
+    alert('Sesión cerrada');
+  });
+}
+
+function setupAlertsPageListeners() {
+  const alertsPage = document.getElementById('alertsPage');
+  if (!alertsPage) return;
+
+  const user = getCurrentUser();
+  if (!user) {
+    router.go('/login');
+    return;
+  }
+
+  renderAlertsPage();
+
+  const filterSelect = document.getElementById('alertFilter');
+  if (filterSelect) {
+    filterSelect.addEventListener('change', () => {
+      renderAlertsPage();
+    });
+  }
+}
+
+function renderAlertsPage() {
+  const alerts = getAlerts();
+  const filterValue = document.getElementById('alertFilter')?.value || '';
+
+  let filtered = alerts;
+  if (filterValue === 'active') {
+    filtered = alerts.filter(a => a.enabled);
+  } else if (filterValue === 'inactive') {
+    filtered = alerts.filter(a => !a.enabled);
+  }
+
+  const alertsList = document.getElementById('alertsList');
+  const emptyState = document.getElementById('emptyAlertsState');
+
+  if (filtered.length === 0) {
+    alertsList.style.display = 'none';
+    emptyState.style.display = 'flex';
+    return;
+  }
+
+  alertsList.style.display = 'flex';
+  emptyState.style.display = 'none';
+
+  alertsList.innerHTML = filtered.map(alert => {
+    const product = PRODUCTS.find(p => p.id === alert.productId);
+    if (!product) return '';
+
+    return `
+      <div class="alert-card">
+        <div class="alert-product">
+          <img src="${product.image}" alt="${product.name}">
+          <div class="alert-info">
+            <h3>${product.name}</h3>
+            <p>Objetivo: €${alert.targetPrice} | Estado: ${alert.enabled ? 'ACTIVA' : 'INACTIVA'}</p>
+          </div>
+        </div>
+        <div class="alert-actions">
+          <button class="alert-btn" data-alert-id="${alert.id}" data-action="toggle">
+            ${alert.enabled ? 'DESACTIVAR' : 'ACTIVAR'}
+          </button>
+          <button class="alert-btn delete" data-alert-id="${alert.id}" data-action="delete">ELIMINAR</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Add event listeners for delete/toggle buttons
+  alertsList.querySelectorAll('.alert-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const alertId = btn.dataset.alertId;
+      const action = btn.dataset.action;
+
+      if (action === 'delete') {
+        if (confirm('¿Eliminar esta alerta?')) {
+          deleteAlert(alertId);
+          renderAlertsPage();
+        }
+      } else if (action === 'toggle') {
+        toggleAlert(alertId);
+        renderAlertsPage();
+      }
+    });
+  });
+}
+
+function getAlerts() {
+  return JSON.parse(localStorage.getItem('sportsscraper_alerts')) || [];
+}
+
+function deleteAlert(alertId) {
+  let alerts = getAlerts();
+  alerts = alerts.filter(a => a.id !== alertId);
+  localStorage.setItem('sportsscraper_alerts', JSON.stringify(alerts));
+}
+
+function toggleAlert(alertId) {
+  let alerts = getAlerts();
+  const alert = alerts.find(a => a.id === alertId);
+  if ( alert) {
+    alert.enabled = !alert.enabled;
+    localStorage.setItem('sportsscraper_alerts', JSON.stringify(alerts));
+  }
+}
+
 // ========================================
+// INITIALIZE ROUTING AND AUTH
+// ========================================
+
+// Setup routers
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  setupAuthListeners();
+  updateUserMenu();
+
+  // Setup page-specific listeners when router navigates
+  const observer = new MutationObserver(() => {
+    const visiblePage = document.querySelector('[data-page]:not([style*="display: none"])');
+    if (visiblePage) {
+      const pageId = visiblePage.id;
+      if (pageId === 'profilePage') {
+        setupProfileListeners();
+      } else if (pageId === 'alertsPage') {
+        setupAlertsPageListeners();
+      }
+    }
+  });
+
+  observer.observe(document.body, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['style']
+  });
+
+  // Initial navigation
+  router.navigate();
+});
+=======
 // PRICE ALERTS (CU3)
 // ========================================
 let currentProductId = null;

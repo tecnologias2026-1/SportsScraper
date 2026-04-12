@@ -1422,6 +1422,432 @@ footer p {
 }
 
 /* ========================================
+   AUTHENTICATION PAGES
+   ======================================== */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--soft-gray);
+  padding: 1rem;
+}
+
+.auth-container {
+  background-color: white;
+  border: 3px solid var(--brutal-black);
+  box-shadow: 6px 6px 0px 0px var(--brutal-black);
+  padding: 2rem;
+  width: 100%;
+  max-width: 450px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 3px solid var(--brutal-black);
+}
+
+.auth-container h1 {
+  font-size: 1.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.auth-container .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.brutal-input {
+  width: 100%;
+  border: 3px solid var(--brutal-black);
+  padding: 0.75rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  box-shadow: 3px 3px 0px 0px var(--brutal-black);
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.brutal-input:focus {
+  outline: none;
+  box-shadow: 6px 6px 0px 0px var(--brutal-black);
+  transform: translate(-3px, -3px);
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--neon-green);
+  color: var(--brutal-black);
+  border: 3px solid var(--brutal-black);
+  padding: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--brutal-black);
+  color: white;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.auth-link a {
+  color: var(--neon-green);
+  text-decoration: none;
+  font-weight: 900;
+  transition: all 0.2s ease;
+}
+
+.auth-link a:hover {
+  color: var(--brutal-black);
+}
+
+/* ========================================
+   PROFILE PAGE
+   ======================================== */
+.profile-section {
+  padding-top: 2rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: white;
+  border: 3px solid var(--brutal-black);
+  box-shadow: 4px 4px 0px 0px var(--brutal-black);
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid var(--neon-green);
+  object-fit: cover;
+}
+
+.profile-info h2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.profile-email {
+  font-family: 'JetBrains Mono', monospace;
+  color: #666;
+  margin: 0;
+}
+
+.profile-member-since {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+.profile-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.profile-actions .brutal-btn {
+  padding: 1rem;
+}
+
+.logout-btn {
+  background: white;
+  color: var(--brutal-black);
+  border: 3px solid #ff4444;
+}
+
+.logout-btn:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.profile-stats .stat {
+  background: white;
+  border: 3px solid var(--brutal-black);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 3px 3px 0px 0px var(--brutal-black);
+}
+
+.profile-stats .stat-number {
+  font-size: 2rem;
+  color: var(--neon-green);
+}
+
+.profile-stats .stat-label {
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.profile-preferences {
+  background: white;
+  border: 3px solid var(--brutal-black);
+  padding: 1.5rem;
+  box-shadow: 3px 3px 0px 0px var(--brutal-black);
+}
+
+.profile-preferences h3 {
+  font-size: 1.1rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.profile-preferences label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.profile-preferences input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* ========================================
+   ALERTS PAGE
+   ======================================== */
+.alerts-section {
+  padding-top: 2rem;
+}
+
+.alerts-controls {
+  margin-bottom: 2rem;
+}
+
+.alerts-controls select {
+  max-width: 300px;
+}
+
+.alerts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alert-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border: 3px solid var(--brutal-black);
+  padding: 1rem;
+  box-shadow: 3px 3px 0px 0px var(--brutal-black);
+  transition: all 0.2s ease;
+}
+
+.alert-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0px 0px var(--brutal-black);
+}
+
+.alert-product {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.alert-product img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 2px solid var(--brutal-black);
+}
+
+.alert-info h3 {
+  font-size: 0.95rem;
+  font-weight: 900;
+  margin: 0 0 0.5rem 0;
+}
+
+.alert-info p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0;
+}
+
+.alert-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.alert-btn {
+  background: var(--brutal-black);
+  color: white;
+  border: 2px solid var(--brutal-black);
+  padding: 0.5rem 1rem;
+  font-weight: 900;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alert-btn:hover {
+  background: var(--neon-green);
+  color: var(--brutal-black);
+}
+
+.alert-btn.delete {
+  background: #ff4444;
+  border-color: #ff4444;
+}
+
+.alert-btn.delete:hover {
+  background: var(--brutal-black);
+  border-color: var(--brutal-black);
+  color: white;
+}
+
+/* ========================================
+   USER MENU (Header)
+   ======================================== */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--neon-green);
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.user-username {
+  font-weight: 900;
+  color: white;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .user-username {
+    display: inline;
+  }
+}
+
+.user-dropdown {
+  position: relative;
+}
+
+.user-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 3px solid var(--brutal-black);
+  box-shadow: 6px 6px 0px 0px var(--brutal-black);
+  min-width: 200px;
+  z-index: 1000;
+  margin-top: 0.5rem;
+}
+
+.user-dropdown-menu.active {
+  display: block;
+}
+
+.user-dropdown-menu a,
+.user-dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  text-align: left;
+  border: none;
+  background: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: var(--brutal-black);
+}
+
+.user-dropdown-menu a:last-child,
+.user-dropdown-menu button:last-child {
+  border-bottom: none;
+}
+
+.user-dropdown-menu a:hover,
+.user-dropdown-menu button:hover {
+  background: var(--soft-gray);
+}
+
+@media (max-width: 639px) {
+  .auth-container {
+    padding: 1.5rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .profile-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .alert-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .alert-actions {
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .alert-btn {
+    flex: 1;
+  }
+}
+
+/* ========================================
    LARGE DESKTOP: 1280px and up
    ======================================== */
 @media (min-width: 1280px) {
