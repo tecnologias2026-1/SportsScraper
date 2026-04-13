@@ -502,7 +502,7 @@ function renderProducts(productsToRender) {
       <div class="brutal-card-footer">
         <span class="brutal-card-price">${priceDisplay}</span>
         <button class="brutal-card-btn" aria-label="Comparar precios" title="Comparar precios">
-          <span style="font-size: 0.8rem;">→</span>
+          <i class="material-icons" style="font-size: 1rem;">arrow_forward</i>
         </button>
       </div>
     `;

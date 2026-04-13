@@ -129,20 +129,20 @@
         <section class="sort-controls" id="sortControls">
             <div style="position: relative;">
                 <button class="sort-btn categories-btn" id="categoriesBtn" style="display: flex; align-items: center; gap: 0.5rem;">
-                    📂 CATEGORÍAS
+                    <i class="material-icons">category</i> CATEGORÍAS
                 </button>
                 <div id="categoriesDropdown" class="dropdown-menu"></div>
             </div>
 
             <div style="position: relative;">
                 <button class="sort-btn" id="sortBtn" style="display: flex; align-items: center; gap: 0.5rem;">
-                    ⬆️ ORDENAR
+                    <i class="material-icons">sort</i> ORDENAR
                 </button>
                 <div id="sortDropdown" class="dropdown-menu">
-                    <div class="dropdown-item" data-sort="featured">⭐ DESTACADOS</div>
-                    <div class="dropdown-item" data-sort="price-low">💰 MENOR PRECIO</div>
-                    <div class="dropdown-item" data-sort="price-high">🔝 MAYOR PRECIO</div>
-                    <div class="dropdown-item" data-sort="newest">🆕 MÁS NUEVOS</div>
+                    <div class="dropdown-item" data-sort="featured"><i class="material-icons">star</i> DESTACADOS</div>
+                    <div class="dropdown-item" data-sort="price-low"><i class="material-icons">trending_down</i> MENOR PRECIO</div>
+                    <div class="dropdown-item" data-sort="price-high"><i class="material-icons">trending_up</i> MAYOR PRECIO</div>
+                    <div class="dropdown-item" data-sort="newest"><i class="material-icons">new_releases</i> MÁS NUEVOS</div>
                 </div>
             </div>
 
@@ -152,8 +152,8 @@
                 <input type="number" id="priceFilter" class="sort-btn" placeholder="Precio máx." style="background: white; flex: 0 1 120px; padding: 0.6rem;" min="0" max="500" step="10">
             </div>
 
-            <button id="resetFiltersBtn" class="sort-btn" style="background: white; border: 2px solid #ff4444; color: #ff4444; padding: 0.6rem 1rem; display: none;">
-                ✕ LIMPIAR
+            <button id="resetFiltersBtn" class="sort-btn" style="background: white; border: 2px solid #ff4444; color: #ff4444; padding: 0.6rem 1rem; display: none; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="material-icons" style="font-size: 1rem;">close</i> LIMPIAR
             </button>
         </section>
 
@@ -188,7 +188,9 @@
     <!-- PRICE COMPARISON MODAL (CU2) -->
     <div id="priceModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <button id="closeModal" class="modal-close">✕</button>
+            <button id="closeModal" class="modal-close">
+                <i class="material-icons">close</i>
+            </button>
 
             <div class="modal-header">
                 <div class="modal-header-left">
@@ -230,7 +232,9 @@
                 <div style="margin-top: 2rem; border-top: 3px solid #000; padding-top: 2rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
                         <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0; text-transform: uppercase;">Alertas de Precio</h3>
-                        <button id="bellButton" style="background: white; border: 3px solid #000; padding: 0.5rem 1rem; cursor: pointer; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; transition: all 0.2s ease;">🔔 CONFIGURAR</button>
+                        <button id="bellButton" style="background: white; border: 3px solid #000; padding: 0.5rem 1rem; cursor: pointer; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="material-icons" style="font-size: 1rem;">notifications</i> CONFIGURAR
+                        </button>
                     </div>
 
                     <!-- Alert Form (Hidden by default) -->
