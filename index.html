@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SportsScraper | Comparador Brutalista</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Google Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- Chart.js para gráfica de histórico de precios -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- HEADER: CU1 - Search Interface -->
     <header class="app-header">
+        <!-- Hidden checkboxes for menu toggle (CSS-only) -->
+        <input type="checkbox" id="mobileMenuToggle" class="menu-toggle">
+
         <div class="header-container">
             <a href="#/" class="logo" style="cursor: pointer; text-decoration: none; color: inherit;">Sports<span>Scraper</span></a>
 
-            <div class="search-bar-wrapper">
+            <!-- Search bar (desktop only) -->
+            <div class="search-bar-wrapper" id="desktopSearch">
                 <div class="search-bar">
                     <input
                         type="text"
@@ -25,7 +31,7 @@
                         autocomplete="off"
                     >
                     <button class="search-btn" aria-label="Ejecutar búsqueda">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"/></svg>
+                        <i class="material-icons">search</i>
                     </button>
                 </div>
                 <div id="search-suggestions" class="search-suggestions">
@@ -33,12 +39,56 @@
                 </div>
             </div>
 
-            <nav class="header-nav">
+            <!-- Mobile menu button (using label for checkbox) -->
+            <label for="mobileMenuToggle" class="mobile-menu-btn" aria-label="Abrir menú">
+                <i class="material-icons">menu</i>
+            </label>
+
+            <!-- Desktop user menu -->
+            <nav class="header-nav" id="desktopNav">
                 <div class="user-menu" id="userMenu">
                     <!-- User menu or login button will be inserted here -->
                 </div>
             </nav>
         </div>
+
+        <!-- Mobile drawer menu (CSS-only toggle) -->
+        <div class="mobile-menu-drawer">
+            <div class="mobile-menu-header">
+                <h3>MENÚ</h3>
+                <label for="mobileMenuToggle" class="close-menu-btn" aria-label="Cerrar menú">
+                    <i class="material-icons">close</i>
+                </label>
+            </div>
+
+            <!-- Search in mobile menu -->
+            <div class="mobile-search-wrapper">
+                <div class="mobile-search-bar">
+                    <input
+                        type="text"
+                        id="mobileSearchInput"
+                        class="mobile-search-input"
+                        placeholder="BUSCAR..."
+                        aria-label="Buscador móvil"
+                        autocomplete="off"
+                    >
+                    <button class="mobile-search-btn" aria-label="Buscar">
+                        <i class="material-icons">search</i>
+                    </button>
+                </div>
+                <div id="mobile-search-suggestions" class="mobile-search-suggestions">
+                    <div class="mobile-suggestions-content"></div>
+                </div>
+            </div>
+
+            <!-- Mobile user menu -->
+            <div class="mobile-user-section" id="mobileUserMenu">
+                <!-- User menu or login button will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Mobile menu overlay (CSS-only) -->
+        <label for="mobileMenuToggle" class="mobile-menu-overlay" aria-label="Cerrar menú"></label>
     </header>
 
     <!-- HOME PAGE (CU1 - Search & Catalog) -->
@@ -78,6 +128,42 @@
     </section>
 
     <main class="container">
+        <!-- FILTER & SORT SECTION -->
+        <section class="sort-controls" id="sortControls">
+            <!-- Categories Dropdown (CSS only) -->
+            <div style="position: relative;">
+                <input type="checkbox" id="categoriesToggle" class="dropdown-toggle" hidden>
+                <label for="categoriesToggle" class="sort-btn categories-btn" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <i class="material-icons">category</i> CATEGORÍAS
+                </label>
+                <div id="categoriesDropdown" class="dropdown-menu"></div>
+            </div>
+
+            <!-- Sort Dropdown (CSS only) -->
+            <div style="position: relative;">
+                <input type="checkbox" id="sortToggle" class="dropdown-toggle" hidden>
+                <label for="sortToggle" class="sort-btn" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <i class="material-icons">sort</i> ORDENAR
+                </label>
+                <div id="sortDropdown" class="dropdown-menu">
+                    <div class="dropdown-item" data-sort="featured"><i class="material-icons">star</i> DESTACADOS</div>
+                    <div class="dropdown-item" data-sort="price-low"><i class="material-icons">trending_down</i> MENOR PRECIO</div>
+                    <div class="dropdown-item" data-sort="price-high"><i class="material-icons">trending_up</i> MAYOR PRECIO</div>
+                    <div class="dropdown-item" data-sort="newest"><i class="material-icons">new_releases</i> MÁS NUEVOS</div>
+                </div>
+            </div>
+
+            <div style="flex: 1;"></div>
+
+            <div style="position: relative;">
+                <input type="number" id="priceFilter" class="sort-btn" placeholder="Precio máx." style="background: white; flex: 0 1 120px; padding: 0.6rem;" min="0" max="500" step="10">
+            </div>
+
+            <button id="resetFiltersBtn" class="sort-btn" style="background: white; border: 2px solid #ff4444; color: #ff4444; padding: 0.6rem 1rem; display: none; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="material-icons" style="font-size: 1rem;">close</i> LIMPIAR
+            </button>
+        </section>
+
         <!-- RESULTS/CATALOG SECTION -->
         <section aria-labelledby="catalog-title">
             <div class="section-title" id="catalog-title">
@@ -117,7 +203,9 @@
                 </svg>
             </button>
 
-            <button id="closeModal" class="modal-close">✕</button>
+            <button id="closeModal" class="modal-close">
+                <i class="material-icons">close</i>
+            </button>
 
             <div class="modal-header">
                 <div class="modal-header-left">
@@ -172,7 +260,7 @@
                     <!-- Alertas activas del usuario -->
                     <div id="activeAlerts" class="active-alerts" style="display: none;">
                         <h4 style="margin: 0 0 1rem 0; font-weight: 900; text-transform: uppercase; font-size: 0.9rem;">Alertas Activas</h4>
-                        <div id="alertsList">
+                        <div id="modalAlertsList">
                             <!-- Items de alertas mostradas aquí -->
                         </div>
                     </div>
@@ -247,6 +335,211 @@
                     <button type="submit" class="brutal-btn btn-primary">REGISTRARSE</button>
                 </form>
                 <p class="auth-link">¿Tienes cuenta? <a href="#/login">INICIA SESIÓN</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAVED PRODUCTS PAGE -->
+    <div id="savedProductsPage" data-page="saved" style="display: none;">
+        <div class="container">
+            <section class="saved-products-section">
+                <div class="section-title">
+                    <span id="savedProductsTitle">MIS PRODUCTOS GUARDADOS</span>
+                    <div class="section-line"></div>
+                </div>
+
+                <div class="saved-products-layout">
+                    <!-- SIDEBAR: Filters -->
+                    <aside class="saved-products-sidebar">
+                        <div class="filters-box">
+                            <h3 class="filters-title">
+                                <i class="material-icons">tune</i> FILTROS
+                            </h3>
+
+                            <!-- Category Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Categoría</label>
+                                <select id="savedCategoryFilter" class="brutal-input" style="width: 100%; padding: 0.6rem;">
+                                    <option value="">Todas</option>
+                                    <option value="Running">Running</option>
+                                    <option value="Apparel">Apparel</option>
+                                    <option value="Training">Training</option>
+                                </select>
+                            </div>
+
+                            <!-- Price Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Rango de Precio</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="number" id="savedPriceMin" class="brutal-input" placeholder="Min" min="0" style="flex: 1; padding: 0.6rem;">
+                                    <input type="number" id="savedPriceMax" class="brutal-input" placeholder="Max" min="0" style="flex: 1; padding: 0.6rem;">
+                                </div>
+                            </div>
+
+                            <!-- Brand Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Marca</label>
+                                <div id="savedBrandFilters" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                            </div>
+
+                            <!-- Rating Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Valoración Mínima</label>
+                                <select id="savedRatingFilter" class="brutal-input" style="width: 100%; padding: 0.6rem;">
+                                    <option value="0">Todas</option>
+                                    <option value="4">⭐ 4+ estrellas</option>
+                                    <option value="3">⭐⭐ 3+ estrellas</option>
+                                    <option value="2">⭐⭐⭐ 2+ estrellas</option>
+                                </select>
+                            </div>
+
+                            <!-- Stock Filter -->
+                            <div class="filter-group">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <input type="checkbox" id="savedStockFilter">
+                                    <span class="filter-label" style="margin: 0;">Solo en stock</span>
+                                </label>
+                            </div>
+
+                            <!-- Reset Button -->
+                            <button id="savedResetFiltersBtn" class="brutal-btn" style="width: 100%; margin-top: 1rem;">
+                                <i class="material-icons" style="margin-right: 0.5rem; font-size: 1rem;">refresh</i>
+                                LIMPIAR FILTROS
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- MAIN: Products Grid -->
+                    <main class="saved-products-main">
+                        <!-- Sort Options -->
+                        <div class="saved-products-header">
+                            <span id="savedProductsCount" class="products-count">0 productos guardados</span>
+                            <select id="savedSortBy" class="brutal-input" style="padding: 0.6rem; max-width: 200px;">
+                                <option value="newest">Más reciente</option>
+                                <option value="price-low">Menor precio</option>
+                                <option value="price-high">Mayor precio</option>
+                                <option value="rating">Mejor valorados</option>
+                            </select>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="savedProductsEmpty" class="empty-state" style="display: none;">
+                            <div class="empty-state-content">
+                                <i class="material-icons" style="font-size: 3rem; color: #999; margin-bottom: 1rem;">bookmark_border</i>
+                                <h3>No hay productos guardados</h3>
+                                <p>Comienza a guardar productos desde el catálogo</p>
+                                <a href="#/" class="brutal-btn" style="margin-top: 1rem;">
+                                    <i class="material-icons" style="margin-right: 0.5rem; font-size: 1rem;">arrow_back</i>
+                                    VOLVER AL CATÁLOGO
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Products Grid -->
+                        <div id="savedProductsGrid" class="saved-products-grid">
+                            <!-- Grid items will be rendered here -->
+                        </div>
+                    </main>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAILS MODAL (for saved products) -->
+    <div id="savedProductModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button id="closeSavedModal" class="modal-close">
+                <i class="material-icons">close</i>
+            </button>
+
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <h2 id="savedModalProductName"></h2>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <!-- Product Image and Basic Info -->
+                <div class="saved-modal-product-info">
+                    <div class="product-main">
+                        <img id="savedModalProductImage" alt="" style="max-width: 100%; max-height: 350px; border: 3px solid #000; object-fit: cover;">
+                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 150px;">
+                                <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Precio Original</p>
+                                <p id="savedModalOriginalPrice" style="font-size: 1.5rem; font-weight: 900; text-decoration: line-through; color: #999;"></p>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Precio Actual</p>
+                                <p id="savedModalCurrentPrice" style="font-size: 1.5rem; font-weight: 900; color: var(--neon-green);"></p>
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Descuento</p>
+                                <p id="savedModalDiscount" style="font-size: 1.5rem; font-weight: 900; color: var(--neon-green);"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-details">
+                        <h3 style="font-size: 1.1rem; font-weight: 900; margin-bottom: 1.5rem; text-transform: uppercase;">INFORMACIÓN DEL PRODUCTO</h3>
+
+                        <!-- Key Info -->
+                        <div style="border: 2px solid #ddd; padding: 1rem; margin-bottom: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Marca</p>
+                                    <p id="savedModalBrand" style="font-size: 1rem; font-weight: 900;"></p>
+                                </div>
+                                <div>
+                                    <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Categoría</p>
+                                    <p id="savedModalCategory" style="font-size: 1rem; font-weight: 900;"></p>
+                                </div>
+                                <div>
+                                    <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Stock</p>
+                                    <p id="savedModalStock" style="font-size: 1rem; font-weight: 900;"></p>
+                                </div>
+                                <div>
+                                    <p style="font-size: 0.7rem; color: #999; text-transform: uppercase; font-weight: 900;">Entrega</p>
+                                    <p id="savedModalDelivery" style="font-size: 1rem; font-weight: 900;"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ratings -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <p style="font-size: 0.85rem; font-weight: 900; margin-bottom: 0.5rem; text-transform: uppercase;">Valoración</p>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span id="savedModalRating" style="font-size: 1.2rem;">★★★★★</span>
+                                <span id="savedModalReviews" style="font-size: 0.85rem; color: #999; font-family: 'JetBrains Mono';">(0 reseñas)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Specifications -->
+                <div style="margin-top: 2rem; border-top: 3px solid #000; padding-top: 2rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 900; margin-bottom: 1.5rem; text-transform: uppercase;">ESPECIFICACIONES TÉCNICAS</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tbody id="savedModalSpecs">
+                            <!-- Specs will be rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="savedModalAddCart" class="brutal-btn" style="flex: 1; min-width: 150px; background: var(--neon-green); color: var(--brutal-black);">
+                        <i class="material-icons" style="margin-right: 0.5rem; font-size: 1rem;">shopping_cart</i>
+                        AGREGAR AL CARRITO
+                    </button>
+                    <button id="savedModalShare" class="brutal-btn" style="flex: 1; min-width: 150px;">
+                        <i class="material-icons" style="margin-right: 0.5rem; font-size: 1rem;">share</i>
+                        COMPARTIR
+                    </button>
+                    <button id="savedModalRemove" class="brutal-btn" style="flex: 1; min-width: 150px; background: white; color: #ff4444; border: 2px solid #ff4444;">
+                        <i class="material-icons" style="margin-right: 0.5rem; font-size: 1rem;">delete</i>
+                        ELIMINAR
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -342,5 +635,6 @@
     <script src="js/router.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/saved-products.js"></script>
 </body>
 </html>
