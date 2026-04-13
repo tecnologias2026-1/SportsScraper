@@ -941,12 +941,15 @@ function setupAuthListeners() {
 
 function updateUserMenu() {
   const userMenu = document.getElementById('userMenu');
+  const mobileUserMenu = document.getElementById('mobileUserMenu');
   const user = getCurrentUser();
 
+  // Clear both menus
   userMenu.innerHTML = '';
+  if (mobileUserMenu) mobileUserMenu.innerHTML = '';
 
   if (user && isLoggedIn()) {
-    // Show user menu when logged in
+    // Desktop user menu
     userMenu.innerHTML = `
       <img src="${user.avatar}" alt="avatar" class="user-avatar">
       <span class="user-username">${user.name}</span>
@@ -960,7 +963,29 @@ function updateUserMenu() {
       </div>
     `;
 
-    // Add event listeners
+    // Mobile user menu
+    if (mobileUserMenu) {
+      mobileUserMenu.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 2px solid #ddd;">
+          <img src="${user.avatar}" alt="avatar" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--neon-green);">
+          <div>
+            <p style="margin: 0; font-weight: 900; font-size: 0.9rem;">${user.name}</p>
+            <p style="margin: 0; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #999;">${user.email}</p>
+          </div>
+        </div>
+        <a href="#/profile" class="mobile-menu-item">
+          <i class="material-icons">person</i> MI PERFIL
+        </a>
+        <a href="#/alerts" class="mobile-menu-item">
+          <i class="material-icons">notifications</i> MIS ALERTAS
+        </a>
+        <button id="mobileLogoutBtn" class="mobile-menu-item mobile-logout">
+          <i class="material-icons">logout</i> CERRAR SESIÓN
+        </button>
+      `;
+    }
+
+    // Setup desktop dropdown
     const dropdownBtn = userMenu.querySelector('.brutal-btn');
     const dropdownMenu = userMenu.querySelector('.user-dropdown-menu');
 
@@ -974,6 +999,7 @@ function updateUserMenu() {
       }
     });
 
+    // Setup logout button (both desktop and mobile)
     const logoutBtn = document.getElementById('logoutHeaderBtn');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
@@ -983,13 +1009,56 @@ function updateUserMenu() {
         alert('Sesión cerrada');
       });
     }
+
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', () => {
+        logoutUser();
+        updateUserMenu();
+        router.go('/');
+        alert('Sesión cerrada');
+        // Close menu
+        document.getElementById('mobileMenuDrawer').classList.remove('active');
+        document.getElementById('mobileMenuOverlay').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    }
   } else {
-    // Show login button when not logged in
+    // Desktop login button
     userMenu.innerHTML = `<button class="brutal-btn button-login">LOGIN</button>`;
     const newLoginBtn = userMenu.querySelector('.button-login');
     newLoginBtn.addEventListener('click', () => {
       router.go('/login');
     });
+
+    // Mobile login button
+    if (mobileUserMenu) {
+      mobileUserMenu.innerHTML = `
+        <button class="mobile-menu-item" id="mobileLoginBtn">
+          <i class="material-icons">login</i> INICIAR SESIÓN
+        </button>
+        <button class="mobile-menu-item" id="mobileRegisterBtn">
+          <i class="material-icons">app_registration</i> REGISTRARSE
+        </button>
+      `;
+
+      const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+      const mobileRegisterBtn = document.getElementById('mobileRegisterBtn');
+
+      mobileLoginBtn.addEventListener('click', () => {
+        router.go('/login');
+        document.getElementById('mobileMenuDrawer').classList.remove('active');
+        document.getElementById('mobileMenuOverlay').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+
+      mobileRegisterBtn.addEventListener('click', () => {
+        router.go('/register');
+        document.getElementById('mobileMenuDrawer').classList.remove('active');
+        document.getElementById('mobileMenuOverlay').classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+    }
   }
 }
 
