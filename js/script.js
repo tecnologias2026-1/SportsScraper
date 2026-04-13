@@ -922,6 +922,7 @@ function updateUserMenu() {
       <div class="user-dropdown">
         <button class="brutal-btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">CUENTA ▼</button>
         <div class="user-dropdown-menu">
+          <a href="#/saved">MIS PRODUCTOS GUARDADOS</a>
           <a href="#/profile">MI PERFIL</a>
           <a href="#/alerts">MIS ALERTAS</a>
           <button id="logoutHeaderBtn">CERRAR SESIÓN</button>
@@ -939,6 +940,9 @@ function updateUserMenu() {
             <p style="margin: 0; font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #999;">${user.email}</p>
           </div>
         </div>
+        <a href="#/saved" class="mobile-menu-item">
+          <i class="material-icons">bookmark</i> MIS PRODUCTOS GUARDADOS
+        </a>
         <a href="#/profile" class="mobile-menu-item">
           <i class="material-icons">person</i> MI PERFIL
         </a>
