@@ -20,6 +20,30 @@
   box-sizing: border-box;
 }
 
+/* ========================================
+   CHECKBOX TOGGLES (CSS-ONLY MENUS)
+   ======================================== */
+.menu-toggle,
+.filter-toggle,
+.dropdown-toggle {
+  display: none;
+}
+
+/* Mobile menu toggle with checkbox */
+#mobileMenuToggle:checked ~ .mobile-menu-drawer {
+  left: 0;
+}
+
+#mobileMenuToggle:checked ~ .mobile-menu-overlay {
+  display: block;
+}
+
+/* Dropdown toggles */
+#categoriesToggle:checked ~ #categoriesDropdown,
+#sortToggle:checked ~ #sortDropdown {
+  display: block;
+}
+
 html {
   scroll-behavior: smooth;
 }

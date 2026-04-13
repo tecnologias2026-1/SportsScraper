@@ -229,51 +229,32 @@ function setupSearchListeners() {
 // SORT AND FILTER FUNCTIONALITY
 // ========================================
 function setupSortAndFilterListeners() {
-  // Categories button and dropdown
-  const categoriesBtn = document.getElementById('categoriesBtn');
+  // Populate categories dropdown
   const categoriesDropdown = document.getElementById('categoriesDropdown');
-  const resetBtn = document.getElementById('resetFiltersBtn');
-
-  // Get unique categories
   const categories = ['TODOS', ...new Set(PRODUCTS.map(p => p.category))];
   categoriesDropdown.innerHTML = categories.map(cat =>
     `<div class="dropdown-item" data-category="${cat === 'TODOS' ? '' : cat}">${cat}</div>`
   ).join('');
 
-  categoriesBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    categoriesDropdown.classList.toggle('active');
-    document.getElementById('sortDropdown').classList.remove('active');
-  });
-
+  // Category filter
   categoriesDropdown.querySelectorAll('.dropdown-item').forEach(item => {
     item.addEventListener('click', () => {
       currentCategory = item.dataset.category;
-      document.querySelectorAll('#categoriesDropdown .dropdown-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
       applyFilterAndSort();
       updateResetButton();
-      categoriesDropdown.classList.remove('active');
+      // Uncheck checkbox to close dropdown
+      document.getElementById('categoriesToggle').checked = false;
     });
   });
 
-  // Sort button and dropdown
-  const sortBtn = document.getElementById('sortBtn');
+  // Sort dropdown items
   const sortDropdown = document.getElementById('sortDropdown');
-
-  sortBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    sortDropdown.classList.toggle('active');
-    categoriesDropdown.classList.remove('active');
-  });
-
   sortDropdown.querySelectorAll('.dropdown-item').forEach(item => {
     item.addEventListener('click', () => {
       currentSort = item.dataset.sort;
-      document.querySelectorAll('#sortDropdown .dropdown-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
       applyFilterAndSort();
-      sortDropdown.classList.remove('active');
+      // Uncheck checkbox to close dropdown
+      document.getElementById('sortToggle').checked = false;
     });
   });
 
@@ -286,6 +267,7 @@ function setupSortAndFilterListeners() {
   });
 
   // Reset filters button
+  const resetBtn = document.getElementById('resetFiltersBtn');
   resetBtn.addEventListener('click', () => {
     currentCategory = '';
     currentMaxPrice = Infinity;
@@ -294,34 +276,18 @@ function setupSortAndFilterListeners() {
 
     document.getElementById('searchInput').value = '';
     document.getElementById('priceFilter').value = '';
-
-    document.querySelectorAll('#categoriesDropdown .dropdown-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('#sortDropdown .dropdown-item').forEach(i => i.classList.remove('active'));
-
-    categoriesDropdown.querySelector('[data-category=""]')?.classList.add('active');
-    sortDropdown.querySelector('[data-sort="featured"]')?.classList.add('active');
+    document.getElementById('categoriesToggle').checked = false;
+    document.getElementById('sortToggle').checked = false;
 
     applyFilterAndSort();
     updateResetButton();
   });
-
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.sort-controls')) {
-      categoriesDropdown.classList.remove('active');
-      sortDropdown.classList.remove('active');
-    }
-  });
-
-  // Set default active items
-  categoriesDropdown.querySelector('[data-category=""]')?.classList.add('active');
-  sortDropdown.querySelector('[data-sort="featured"]')?.classList.add('active');
 }
 
 function updateResetButton() {
   const resetBtn = document.getElementById('resetFiltersBtn');
   const hasFilters = currentCategory || currentMaxPrice !== Infinity || currentSearch;
-  resetBtn.style.display = hasFilters ? 'block' : 'none';
+  resetBtn.style.display = hasFilters ? 'flex' : 'none';
 }
 
 function applyFilterAndSort() {

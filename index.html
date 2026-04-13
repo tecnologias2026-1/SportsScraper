@@ -13,6 +13,11 @@
 <body>
     <!-- HEADER: CU1 - Search Interface -->
     <header class="app-header">
+        <!-- Hidden checkboxes for menu toggle (CSS-only) -->
+        <input type="checkbox" id="mobileMenuToggle" class="menu-toggle">
+        <input type="checkbox" id="categoriesToggle" class="filter-toggle">
+        <input type="checkbox" id="sortToggle" class="filter-toggle">
+
         <div class="header-container">
             <a href="#/" class="logo" style="cursor: pointer; text-decoration: none; color: inherit;">Sports<span>Scraper</span></a>
 
@@ -36,10 +41,10 @@
                 </div>
             </div>
 
-            <!-- Mobile menu button -->
-            <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Abrir menú">
+            <!-- Mobile menu button (using label for checkbox) -->
+            <label for="mobileMenuToggle" class="mobile-menu-btn" aria-label="Abrir menú">
                 <i class="material-icons">menu</i>
-            </button>
+            </label>
 
             <!-- Desktop user menu -->
             <nav class="header-nav" id="desktopNav">
@@ -49,13 +54,13 @@
             </nav>
         </div>
 
-        <!-- Mobile drawer menu -->
-        <div id="mobileMenuDrawer" class="mobile-menu-drawer">
+        <!-- Mobile drawer menu (CSS-only toggle) -->
+        <div class="mobile-menu-drawer">
             <div class="mobile-menu-header">
                 <h3>MENÚ</h3>
-                <button id="closeMenuBtn" class="close-menu-btn" aria-label="Cerrar menú">
+                <label for="mobileMenuToggle" class="close-menu-btn" aria-label="Cerrar menú">
                     <i class="material-icons">close</i>
-                </button>
+                </label>
             </div>
 
             <!-- Search in mobile menu -->
@@ -83,10 +88,10 @@
                 <!-- User menu or login button will be inserted here -->
             </div>
         </div>
-    </header>
 
-    <!-- Mobile menu overlay -->
-    <div id="mobileMenuOverlay" class="mobile-menu-overlay"></div>
+        <!-- Mobile menu overlay (CSS-only) -->
+        <label for="mobileMenuToggle" class="mobile-menu-overlay" aria-label="Cerrar menú"></label>
+    </header>
 
     <!-- HOME PAGE (CU1 - Search & Catalog) -->
     <div id="homePage" data-page="home">
@@ -127,17 +132,21 @@
     <main class="container">
         <!-- FILTER & SORT SECTION -->
         <section class="sort-controls" id="sortControls">
+            <!-- Categories Dropdown (CSS only) -->
             <div style="position: relative;">
-                <button class="sort-btn categories-btn" id="categoriesBtn" style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="categoriesToggle" class="dropdown-toggle" hidden>
+                <label for="categoriesToggle" class="sort-btn categories-btn" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                     <i class="material-icons">category</i> CATEGORÍAS
-                </button>
+                </label>
                 <div id="categoriesDropdown" class="dropdown-menu"></div>
             </div>
 
+            <!-- Sort Dropdown (CSS only) -->
             <div style="position: relative;">
-                <button class="sort-btn" id="sortBtn" style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="sortToggle" class="dropdown-toggle" hidden>
+                <label for="sortToggle" class="sort-btn" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                     <i class="material-icons">sort</i> ORDENAR
-                </button>
+                </label>
                 <div id="sortDropdown" class="dropdown-menu">
                     <div class="dropdown-item" data-sort="featured"><i class="material-icons">star</i> DESTACADOS</div>
                     <div class="dropdown-item" data-sort="price-low"><i class="material-icons">trending_down</i> MENOR PRECIO</div>
@@ -404,7 +413,6 @@
 
     <script src="js/router.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/mobile-menu.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
