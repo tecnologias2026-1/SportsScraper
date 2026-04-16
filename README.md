@@ -199,7 +199,7 @@ Se ha diseñado una interfaz moderna y deportiva centrada en la facilidad de nav
   <img src="assets/figma-preview.png" width="600" title="Vista previa del prototipo en Figma">
 </p>
 
-[Ver prototipo completo en Figma](https://www.figma.com/proto/c4HlNcBL0y6i2YNKr1lmiO/SportsScraper?node-id=1-5&starting-point-node-id=1%3A5)
+[Ver prototipo completo en Figma](https://www.figma.com/design/OlscT9RxvE8jPj4fcqBwKJ/Prototipo-Final?node-id=0-1&t=L0Y4juUF77l6IfoN-1)
 
 ### 🗄️ 6. Diseño de Base de Datos
 
