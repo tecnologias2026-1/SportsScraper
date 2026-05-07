@@ -4,8 +4,8 @@ Descripción: Plataforma de metabúsqueda y comparación de precios en tiempo re
 
 ### 👥 Integrantes
 
-Luisa Fernanda Arenas Pachon – Código
-Juan Miguel Trujillo Garcia - 
+Luisa Fernanda Arenas Pachon – 1202807
+Juan Miguel Trujillo Garcia - 1202774
 Oscar Javier Fernández Bernal – 1202786
 
 ### 🎯 1. Objetivo General
